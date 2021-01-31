@@ -40,4 +40,8 @@ def load_excel( path:str, index:str = None, trimNaN:bool = True ) :
     # Setting Index
     if index: df.set_index( index.upper(), inplace=True )
 
+    dtypes = {}
+    [ dtypes.__setitem__( col, "int32") for col in df.columns if is_size( col ) or col == "PCS" or col == "PIECES" ]
+    df = df.astype( dtypes )
+
     return df

@@ -2,17 +2,24 @@ from typing import List, Dict
 from helper import to_cbm, to_sqmtr
 
 class Item:
-    def __init__(self, size:str, pcs:int, grade:int = None ):
+    def __init__(self, size:str, pcs:int, grade:int = None , round_up_sqmtr:int = None, round_up_cbm:int = None ):
 
         # Initializing
-        self.size, self.pcs, self.grade = size, pcs, grade
-        self.re_calc_cbm().re_calc_sqmtr()
+        self.size = size
+        self.pcs = pcs
+        self.grade = grade
+        self.round_up_cbm = round_up_cbm
+        self.round_up_sqmtr = round_up_sqmtr       
+        
+        self.re_calc_sqmtr().re_calc_cbm()
     
     def re_calc_sqmtr( self, round_up:int = None) -> "Item": 
-        self.sqmtr = to_sqmtr( self.size, self.pcs, round_up )
+        if round_up: self.round_up_sqmtr = round_up
+        self.sqmtr = to_sqmtr( self.size, self.pcs, self.round_up_sqmtr )
         return self
     def re_calc_cbm( self, round_up:int = None ) -> "Item":
-        self.cbm = to_cbm( self.size, self.pcs, round_up )
+        if round_up: self.round_up_cbm = round_up
+        self.cbm = to_cbm( self.size, self.pcs, self.round_up_cbm )
         return self
 
     def get_sqmtr( self ) -> float: return self._sqmtr
