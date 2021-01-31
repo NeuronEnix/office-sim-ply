@@ -1,3 +1,4 @@
 .vscode
 a.hpp
 *.exe
+__pycache__

@@ -5,10 +5,33 @@
 
 using namespace std;
 
+template<class T>
+int findEleColWise( const vector< vector<T> >& vec, int colPos, T ele ) {
+    for (size_t i = 0; i < vec.size(); i++) 
+        if( vec[i][colPos] == ele ) return i;
+    return -1;
+    
+}
+
 class Sale_Invoice {
 
 private:
     CSV_Parser *parser;
+    void sumDuplicates() {
+        auto& data = this->parser->getData();
+        auto sizePos = this->parser->getHeaderPos( "Size" );
+        auto piecesPos = this->parser->getHeaderPos( "Pieces" );
+        // cout << sizePos;
+        // cout << piecesPos;
+        // return;
+        // cout << endl << piecesPos;
+        for( int i=data.size()-1; i>=0; --i ) {
+            const int foundPos = findEleColWise( data, sizePos, data[i][sizePos] );
+            if( foundPos == i ) continue;
+            data[i][sizePos] = to_string( stoull(data[foundPos][piecesPos]) + stoull(data[i][piecesPos]) );
+            data.erase( data.begin() + foundPos );
+        }
+    }
 
 public:
     Sale_Invoice();
@@ -24,6 +47,7 @@ public:
 Sale_Invoice::Sale_Invoice() {
     this->parser = new CSV_Parser();
     this->parser->readFromFile( Config::Sale_Invoice::inputFileName );
+    // this->sumDuplicates();
 }
 
 

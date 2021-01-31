@@ -45,11 +45,12 @@ namespace Helper {
         return first * second ;
     }
 
-    double to_cbm(  const string& itemSize, const uint64_t itemQty ) { 
-        return itemQty*(double)0.25*getMultipliedValue( itemSize );
-    }
     double to_sqmtr( const string& itemSize, const uint64_t itemQty ) { 
-        return itemQty*getMultipliedValue( itemSize );
+        return getMultipliedValue( itemSize )*itemQty;
+    }
+    
+    double to_cbm(  const string& itemSize, const uint64_t itemQty ) { 
+        return to_sqmtr( itemSize, itemQty)*0.25/1000;
     }
 
     void attach_1D_vector_as_last_column_of_2D_vector( const vector<string>& vec_1d, vector< vector < string > >& vec_2d ) {
