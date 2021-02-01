@@ -1,56 +1,69 @@
-from typing import List
-from pandas import DataFrame
-
-from helper import load_excel, is_size
-from Document import Document
-from Item import Item
-
+from helper import load_excel, is_size, to_cbm, to_sqmtr
+from meta import build_pur_inv
 class Purchase:
-    def __init__( self, df:DataFrame ):
-        
-        self.doc_list:List[Document] = []
-
-        # Go through each row 
+    def __init__(self, path:str ):
+        df = load_excel( path )
+        self.data = []
         for ind in df.index:
-            item_list = []
-            other_info = {}
-
-            #from each cell extract the col header, if it is size then add to item_list( [SIZE, PCS] ) else add to other_info
+            each_invoice = {}
+            each_invoice[ "_item" ]:Dict[ str, int ] = {}
             for col in df.columns:
-                # item_list.append( [ size, pcs, grade, round_up_sqmtr, round_up_cbm ] )
-                if is_size( col ):
-                    item_list.append( [ col, df[col][ind], None, 2, 3 ] )
-                else: other_info[ col ] = df[col][ind]
-
-            self.doc_list.append( Document( item_list, other_info ) )
+                if is_size( col ): each_invoice["_item"][ col ] = int( df[col][ind] )
+                else: each_invoice[ col ] = df[ col ][ ind ] # Other info
+            self.data.append( each_invoice )
         
-    def purchase( self, pur_item:Item ) -> List:
+    def purchase( self, size:str, pcs:int ) -> list :
+        size_list = self.df[ size ]
+        deducted_list = []
+        for ind in self.df.index: # ind is index of invoice
+            if size_list[ ind ] == 0: pass
 
-        pur_item = pur_item.clone()
-        deducted_list:List[str] = []
-
-        for doc in self.doc_list:
+            if size_list[ ind ] >= pcs: deduct_pcs = pcs
+            else: deduct_pcs = size_list[ ind ]
             
-            # doc.item_by_size[ item.size ] -> guaranteed to return one element always
-            avail_item = doc.item_by_size[ pur_item.size ][0]
+            self.df.at[ ind, size ] -= deduct_pcs
+            pcs -= deduct_pcs
 
-            if avail_item.pcs == 0: pass
+            if deduct_pcs: deducted_list.append( ind + "(" + str(deduct_pcs) + ")")
 
-            if avail_item.pcs >= pur_item.pcs: deduct_pcs = pur_item.pcs
-            else: deduct_pcs = avail_item.pcs
-
-            pur_item.pcs -= deduct_pcs
-            avail_item.pcs -= deduct_pcs
-
-            if deduct_pcs: deducted_list.append( doc.info["INVOICE"] + "(" + str(deduct_pcs) + ")")
-
-            if pur_item.pcs == 0: return deducted_list
+            if pcs == 0: return deducted_list
 
         else: # If Enough pcs not available
-            print( "\n!!!!!!!!!!!!!!!!!!!\nStock not available for Size:", pur_item.size )
-            print( "Pieces needed:", pur_item.pcs )
+            print( "\n!!!!!!!!!!!!!!!!!!!\nStock not available for Size:", size )
+            print( "PCS needed:", pcs )
             print( "Available Stock: 0")
             input( "\nPlease update the stock to get the result\nPress Enter to close" )
             exit()
 
-    
+    def add( self, ind:int, col:str, val:any ): self.df.at[ ind, col ] = val
+
+    def comp( self ):
+        df = self.df
+        df.reset_index(level=0, inplace=True)
+        df_row, df_col = len( df ), len( df.columns )
+
+        # Right most 3
+        df.insert( df_col  , "TOTAL", [0]*df_row )
+        df.insert( df_col+1, "CBM"  , [0]*df_row )
+        df.insert( df_col+2, "SQMTR", [0]*df_row )
+
+        # Bottom 3
+        self.df.at[ df_row,   "INVOICE" ] = "TOTAL"
+        self.df.at[ df_row+1, "INVOICE" ] = "TOTAL CBM"
+        self.df.at[ df_row+2, "INVOICE" ] = "TOTAL SQMTR"
+
+        for col in df.columns:
+            
+            if is_size( col ):
+                
+                # Bottom 3 rows
+                df.at[ df_row+0, col ] = sum( df[ col ].tolist()[:df_row] ) # -1 to ignore last line because it'll contain nan usually
+                df.at[ df_row+1, col ] = to_cbm( col, df.at[ df_row, col ] )
+                df.at[ df_row+2, col ] = to_sqmtr( col, df.at[ df_row, col ] )
+
+                # Right most 3 col
+                for i in range( 0, df_row ):
+                    df.at[ i, "TOTAL"] += df.at[ i, col ]  
+                    df.at[ i, "CBM"]   += to_cbm( col, df.at[ i, col ] ) 
+                    df.at[ i, "SQMTR"] += to_sqmtr( col, df.at[ i, col ] )
+                
