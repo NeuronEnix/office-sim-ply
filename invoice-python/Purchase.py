@@ -29,7 +29,7 @@ class Purchase:
 
         else: # If Enough pcs not available
             print( "\n!!!!!!!!!!!!!!!!!!!\nStock not available for Size:", size )
-            print( "Pieces needed:", pcs )
+            print( "PCS needed:", pcs )
             print( "Available Stock: 0")
             input( "\nPlease update the stock to get the result\nPress Enter to close" )
             exit()
