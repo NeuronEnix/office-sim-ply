@@ -1,5 +1,5 @@
 from helper import load_excel, is_size, to_cbm, to_sqmtr
-
+from meta import build_pur_inv
 class Purchase:
     def __init__(self, path:str ):
         self.df = load_excel( path, "Invoice" )
@@ -9,6 +9,7 @@ class Purchase:
         [ dtypes.__setitem__( col, "int32") for col in self.df.columns if is_size( col ) ]
         self.df = self.df.astype( dtypes )
         
+        self.meta = build_pur_inv( self.df )
 
     def purchase( self, size:str, pcs:int ) -> list :
         size_list = self.df[ size ]

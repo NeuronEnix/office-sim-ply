@@ -16,7 +16,7 @@ feet_equiv = {
 def is_size( size:str ): 
     return re.search( "[0-9].*[xX][0-9]", size )
 
-def get_size( size:str ): return size.split("X")
+def get_size( size:str ): return size.upper().split("X")
 
 def to_sqmtr( size:str, pcs:int, round_up:int = None ) -> float:
     l,w = get_size( size )
