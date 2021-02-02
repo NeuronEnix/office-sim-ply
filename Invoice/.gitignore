@@ -1,2 +1,6 @@
 ~$pur_inv.xlsx
 ~$Update.xlsx
+build
+dist
+meta
+*.spec

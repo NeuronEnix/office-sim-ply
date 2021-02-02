@@ -15,16 +15,18 @@ feet_equiv = {
 }
 
 def is_size( size:str ): 
-    return re.search( "[0-9][xX][0-9]", size )
+    return re.search( "[0-9].*[xX][0-9]", size )
 
-def get_size( size:str ): return size.split("X")
+def get_size( size:str ): return size.upper().split("X")
 
-def to_sqmtr( size, pcs, round_up=-1 ):
+def to_sqmtr( size:str, pcs:int, round_up:int = None ) -> float:
     l,w = get_size( size )
-    res = feet_equiv[ l ] * feet_equiv[ w ] * pcs 
-    return round( res, 2 ) if round_up == -1 else round( res, round_up )
+    res = feet_equiv[ l ] * feet_equiv[ w ] * pcs
+    return  res if round_up == None else round( res, round_up )
     
-def to_cbm( size, pcs ): return round( to_sqmtr( size, pcs, round_up=4 ) / 1000 * 0.25, 4 )
+def to_cbm( size:str, pcs:int, round_up:int = None ):
+    res = to_sqmtr( size, pcs ) / 1000 * 0.25
+    return res if round_up == None else round( res, round_up ) 
 
 def load_excel( path:str, index:str = None, trimNaN:bool = True ) -> DataFrame :
     df = pd.read_excel( path )
@@ -38,5 +40,9 @@ def load_excel( path:str, index:str = None, trimNaN:bool = True ) -> DataFrame :
 
     # Setting Index
     if index: df.set_index( index.upper(), inplace=True )
+
+    dtypes = {}
+    [ dtypes.__setitem__( col, "int32") for col in df.columns if is_size( col ) or col == "PCS" or col == "PIECES" ]
+    df = df.astype( dtypes )
 
     return df

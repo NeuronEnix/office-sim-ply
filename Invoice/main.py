@@ -1,20 +1,28 @@
 import pandas as pd
+from json import dumps
 from Purchase import Purchase
 from Sale import Sale
+from pathlib import Path
 
 pur = Purchase( "./pur_inv.xlsx" )
 sale = Sale( "./sale_inv.xlsx" )
 
-for ind in sale.df.index:
-    inv_list = pur.purchase( sale.size_at( ind ), sale.pcs_at( ind ) )
-    sale.sold( ind, inv_list )
+for each_sale_inv in sale.inv:
+    for item in each_sale_inv[ "_item" ]:
+        pur.purchase( item["SIZE"], item["PCS"], each_sale_inv[ "_id"], item["_id"] )
 
-pur.comp()
-print( pur.df )
-print( sale.df )
+from Report import Report
+report = Report( pur.inv, sale.inv, pur.pur_sale )
 
 # Writing to excel
 writer = pd.ExcelWriter( "./Update.xlsx", engine="xlsxwriter" )
-pur.df.to_excel( writer, sheet_name="pur_upd" )
-sale.df.to_excel( writer, sheet_name="sale_upd")
+report.df.to_excel( writer, sheet_name="Report", index=False, merge_cells=True)
 writer.save()
+
+# To JSON
+p = Path("./meta")
+p.mkdir(exist_ok=True )
+
+with open( "./meta/purchase.json", 'w') as f: f.write( str(pur.inv).replace("'",'"') )
+with open( "./meta/sale.json", 'w') as f: f.write( str(sale.inv).replace("'",'"') )
+with open( "./meta/pur_sale.json", 'w') as f: f.write( str(pur.pur_sale).replace("'",'"') )
