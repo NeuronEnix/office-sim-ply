@@ -41,7 +41,9 @@ class Report:
             [ table[key].append( cur_sale_inv[ key ] )  for key in sale_inv_keys ]
 
             # Add These info to table : GRADE, SIZE, PCS, BUNDLE, CBM, SQMTR
-            [ table[ key ].append( cur_item[ key ] ) for key in ("GRADE","SIZE","PCS") ]
+            [ table[ key ].append( cur_item[ key ] ) for key in ("GRADE","SIZE") ]
+
+            table[ "PCS" ].append( cur_pur_sale[ "pcs" ] )
             
             # Other Computed Columns
             table[ "BUNDLE" ].append( cur_item["PCS"] // 50 )

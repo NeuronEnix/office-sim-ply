@@ -23,6 +23,6 @@ writer.save()
 p = Path("./meta")
 p.mkdir(exist_ok=True )
 
-with open( "./meta/purchase.json", 'w') as f: f.write( str(pur.inv).replace("'",'"') )
+with open( "./meta/purchase.json", 'w') as f: f.write( str(pur.inv).replace("'",'"').replace('""', '"') )
 with open( "./meta/sale.json", 'w') as f: f.write( str(sale.inv).replace("'",'"') )
 with open( "./meta/pur_sale.json", 'w') as f: f.write( str(pur.pur_sale).replace("'",'"') )
