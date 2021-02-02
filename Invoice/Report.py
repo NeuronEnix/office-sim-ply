@@ -46,8 +46,8 @@ class Report:
             table[ "PCS" ].append( cur_pur_sale[ "pcs" ] )
             
             # Other Computed Columns
-            table[ "BUNDLE" ].append( cur_item["PCS"] // 50 )
-            table[ "SQMTR" ].append( to_sqmtr( cur_item["SIZE"], cur_item["PCS"], 2 ) )
-            table[ "CBM" ].append( to_cbm( cur_item["SIZE"], cur_item["PCS"], 4 ) )
+            table[ "BUNDLE" ].append( cur_pur_sale[ "pcs" ] // 50 )
+            table[ "SQMTR" ].append( to_sqmtr( cur_item["SIZE"], cur_pur_sale[ "pcs" ], 2 ) )
+            table[ "CBM" ].append( to_cbm( cur_item["SIZE"], cur_pur_sale[ "pcs" ], 4 ) )
 
         self.df = DataFrame( table )
