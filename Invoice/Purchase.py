@@ -6,14 +6,18 @@ from helper import load_excel, is_size
 Structure of "self.inv":
 self.inv = [
     {
-        "_id": 0,
-        "_item": {
-            "8X4":4,
+        "_id": 0,  #Auto indexing from -> 0,
+        "_item": {  # _item is of the form { size : pcs } 
+            "8X4":4, # Length=8, Breadth=4, Pieces=4
+            "3X2":10 # Length=3, Breadth=2, Pieces=20
             .......,
-            "3X2":10
         },
-        "info-1": "something-1",
-        "info-2": "something-2",
+        
+        # these fields are automatically made based on the columns present in the excel sheet
+        "other_fld_1": "something-1",
+        "other_fld_2": "something-2",
+        "...........": "...........",
+        "other_fld_n": "something-n",
     }
 ]
 """

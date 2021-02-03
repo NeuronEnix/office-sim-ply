@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import List, Dict, Any
 from pandas import DataFrame, ExcelWriter
 
@@ -54,6 +55,8 @@ class Report:
         self.table[ "BUNDLE" ].append( pcs // 50 )
         self.table[ "SQMTR" ].append( to_sqmtr( cur_item["SIZE"], pcs, 2 ) )
         self.table[ "CBM" ].append( to_cbm( cur_item["SIZE"], pcs, 4 ) )
-    
-    def to_excel(self):
-        DataFrame( self.table ).to_excel("./Update1.xlsx", index=False, sheet_name="Report" )
+
+    def to_excel(self) :
+        p = Path("./Update")
+        p.mkdir(exist_ok=True )
+        DataFrame( self.table ).to_excel("./Update/Report.xlsx", index=False, sheet_name="Report" )
