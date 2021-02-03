@@ -1,8 +1,9 @@
 from typing import List, Dict, Any
 
 from View import View
+# from helper import to_cbm, to_sqmtr
 
-class Report:
+class Invoice_Wise:
     def __init__(self, pur_inv_list:List[ Dict[ str, Any] ], sale_inv_list:List[ Dict[ str, Any] ] ):
         # Check if key in each pur and sale dict are unique 
         self.pur_inv_keys = set( pur_inv_list[0].keys() )
