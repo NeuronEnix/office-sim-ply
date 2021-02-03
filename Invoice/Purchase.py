@@ -58,7 +58,7 @@ class Purchase:
             each_inv_item[ size ] -= deduct_pcs
 
             if deduct_pcs: self.pur_sale.append({
-                "_id:":len( self.pur_sale ),
+                "_id":len( self.pur_sale ),
                 "pur_id" : each_inv[ "_id" ],
                 "sale_id": sale_id,
                 "item_id": item_id,
