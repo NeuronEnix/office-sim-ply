@@ -5,9 +5,10 @@ Stuffs needed:
 `python 3.x`
 
 Python Module needed:
-`pip install pandas, numpy` 
-( and some more as well which i don't remember, just install the module that the program demands when you run it )
-install `pyinstaller` if you want to make an .exe file
+`pip install pandas, xlrd, openpyxl` 
+( and some more as well, just install the module that the program demands when you run it. )
+
+Install `pyinstaller` if you want to make an .exe file
 
 Documentation are in
 `Purchase.py`: for `pur_inv`, `pur_sale`
