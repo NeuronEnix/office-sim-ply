@@ -1,53 +1,49 @@
 from typing import List, Dict, Any
-from pandas import DataFrame
-from helper import to_cbm, to_sqmtr
-import pandas as pd
+
+from View import View
+
 class Report:
-    def __init__(self, pur_inv:List[ Dict[ str, Any] ], sale_inv:List[ Dict[ str, Any] ], pur_sale:List[ Dict[ str, int] ] ):
+    def __init__(self, pur_inv_list:List[ Dict[ str, Any] ], sale_inv_list:List[ Dict[ str, Any] ] ):
         # Check if key in each pur and sale dict are unique 
-        pur_inv_keys = set( pur_inv[0].keys() )
-        sale_inv_keys = set( sale_inv[0].keys() )
+        self.pur_inv_keys = set( pur_inv_list[0].keys() )
+        self.sale_inv_keys = set( sale_inv_list[0].keys() )
 
         # Remove "_item" and "_id" they are common on both pur and sale
         for common_keys in [ "_id", "_item" ]:
-            pur_inv_keys.remove( common_keys )
-            sale_inv_keys.remove( common_keys )
+            self.pur_inv_keys.remove( common_keys )
+            self.sale_inv_keys.remove( common_keys )
+        self.sale_inv_keys.remove("PUR_INV_ID")
         
         # If any common keys in found other than "_id" and "_item" which was removed in the above for loop
-        if len( pur_inv_keys.intersection( sale_inv_keys ) ) != 0: 
-            print( "Purchase Columns:", pur_inv_keys )
-            print( "Sale Columns:", sale_inv_keys)
-            print( "Common Columns:", pur_inv_keys.intersection( sale_inv_keys ))
+        if len( self.pur_inv_keys.intersection( self.sale_inv_keys ) ) != 0: 
+            print( "Purchase Columns:", self.pur_inv_keys )
+            print( "Sale Columns:", self.sale_inv_keys)
+            print( "Common Columns:", self.pur_inv_keys.intersection( self.sale_inv_keys ))
             print( "Purchase Invoice File and Sale Invoice File may have same Column Name")
             print( "Please Make sure than Column Names in Purchase and Sale Invoice file are not Repeated in each other")
             print( "Press Enter to Continue"); input(); exit()
         
-        # Falls through if all good
+        # Continue if all good
+        self.pur_inv_list = pur_inv_list
+        self.sale_inv_list = sale_inv_list
+        self.view = View()
 
-        table_cols = list( pur_inv_keys.union( sale_inv_keys ) )
-        table_cols.extend( [ "GRADE", "SIZE", "PCS", "BUNDLE", "CBM", "SQMTR"] ) # Additional column
-        table:Dict[ str, List] = { cols:[] for cols in table_cols }
+    def pur_sale( self, _id:int, pur_id:int, sale_id:int, item_id:int, pcs:int ):
+        cur_pur_inv  = self.pur_inv_list [ pur_id ]
+        cur_sale_inv = self.sale_inv_list[ sale_id ]
+        cur_item = cur_sale_inv[ "_item" ][ item_id ]
 
-        for cur_pur_sale in pur_sale:
+        # Add Info of "pur_inv" to table
+        for key in self.pur_inv_keys: self.view[key] = cur_pur_inv[ key ]
 
-            cur_pur_inv  = pur_inv [ cur_pur_sale[ "pur_id" ] ]
-            cur_sale_inv = sale_inv[ cur_pur_sale[ "sale_id"] ]
-            cur_item = cur_sale_inv[ "_item" ][ cur_pur_sale[ "item_id"] ]
+        # Add Info of "sale_inv" to table
+        for key in self.sale_inv_keys: self.view[key] = cur_sale_inv[ key ] 
 
-            # Add Info of "pur_inv" to table
-            [ table[key].append( cur_pur_inv[ key ] ) for key in pur_inv_keys ]
+        # Add These info to table : GRADE, SIZE, PCS, BUNDLE, CBM, SQMTR
+        for key in ("GRADE","SIZE"): self.view[ key ] = cur_item[ key ]
 
-            # Add Info of "sale_inv" to table
-            [ table[key].append( cur_sale_inv[ key ] )  for key in sale_inv_keys ]
+        self.view[ "PCS" ] = pcs
 
-            # Add These info to table : GRADE, SIZE, PCS, BUNDLE, CBM, SQMTR
-            [ table[ key ].append( cur_item[ key ] ) for key in ("GRADE","SIZE") ]
-
-            table[ "PCS" ].append( cur_pur_sale[ "pcs" ] )
-            
-            # Other Computed Columns
-            table[ "BUNDLE" ].append( cur_pur_sale[ "pcs" ] // 50 )
-            table[ "SQMTR" ].append( to_sqmtr( cur_item["SIZE"], cur_pur_sale[ "pcs" ], 2 ) )
-            table[ "CBM" ].append( to_cbm( cur_item["SIZE"], cur_pur_sale[ "pcs" ], 4 ) )
-
-        self.df = DataFrame( table )
+    def to_excel(self) :
+        self.view.comp_bundle().comp_cbm().comp_sqmtr()
+        self.view.to_excel("./Update/", "Sales Report", "Report")
