@@ -5,7 +5,7 @@ Stuffs needed:
 `python 3.x`
 
 Python Module needed:
-`pip install pandas, xlrd, openpyxl` 
+`pip install pandas, xlrd, openpyxl, xlsxwriter` 
 ( and some more as well, just install the module that the program demands when you run it. )
 
 Install `pyinstaller` if you want to make an .exe file

@@ -15,7 +15,7 @@ class View:
     def __getitem__( self, col_name ):
         try: return self.table[col_name]
         except: return []
-        
+    
     def comp_bundle( self, pcs_col_name:str = "PCS" ):
         bundle_list:List[int] = []
         
@@ -52,7 +52,14 @@ class View:
         print( "Size Column:", size_col_name )
         print( "Pieces Column:", pcs_col_name )
     
-    def to_excel( self, path:str, file_name:str, sheet_name:str = "Sheet 1"  ):
+    def comp_all( self, size_col:str = "SIZE", pcs_col:str = "PCS" ) -> "View":
+        self.comp_bundle( pcs_col ).comp_cbm(size_col, pcs_col).comp_sqmtr( size_col, pcs_col )
+        return self
+    
+    def to_excel( self, path:str = "./", file_name:str = "file", sheet_name:str = "Sheet 1", writer:ExcelWriter = None  ):
         Path(path).mkdir(exist_ok=True,parents=True )
         for c in '\/:*?"<>|': file_name = file_name.replace( c, " " )
-        DataFrame( self.table ).to_excel( path+"/"+file_name+".xlsx", sheet_name=sheet_name, index = False, )
+        df = DataFrame( self.table )
+        if writer: df.to_excel( writer, sheet_name=sheet_name, index=False )
+        else: df.to_excel( path + file_name + ".xlsx", sheet_name=sheet_name, index = False )
+            

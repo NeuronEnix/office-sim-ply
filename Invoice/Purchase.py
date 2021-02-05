@@ -1,5 +1,6 @@
 from typing import List, Dict
-
+from pandas import ExcelWriter
+from View import View
 from helper import load_excel, is_size
 
 """
@@ -46,8 +47,20 @@ class Purchase:
                 else: each_invoice[ col ] = df[ col ][ ind ] # Other info
             self.inv.append( each_invoice )
 
-    def purchase( self, size:str, pcs:int, sale_id:int, item_id:int ) -> None:
-        for each_inv in self.inv:
+    def purchase( self, size:str, pcs:int, sale_id:int, item_id:int, inv_id:int = None ) -> None:
+        tot_pcs = pcs
+        if inv_id:
+            inv_id = int(inv_id)
+            if 0 <= inv_id < len( self.inv ): 
+                inv_id = int(inv_id)
+                inv_list = [ self.inv[ inv_id ] ]
+            else: 
+                print( "INV_ID: {0} out of bound | [0:{1}]".format(inv_id, len(self.inv)-1) )
+                print("Press Enter to Exit!"); input(); exit()
+
+        else: inv_list = self.inv
+
+        for each_inv in inv_list:
             each_inv_item = each_inv["_item"]
             
             # if 0 pcs available in cur invoice then pass
@@ -74,7 +87,41 @@ class Purchase:
         # After going through all invoices
         # if pcs are still left to be deducted then
         print( "\n!!!!!!!!!!!!!!!!!!!\nStock not available for Size:", size )
-        print( "PCS needed:", pcs )
-        print( "Available Stock: 0")
+        print( "PCS needed:", tot_pcs )
+        print( "Available PCS: ", tot_pcs-pcs)
+        print( "Difference:",pcs)
         input( "\nPlease update the stock to get the result\nPress Enter to close" )
         exit()
+
+    def to_excel( self ):
+        view = View()
+        item_size_list = list( self.inv[0]["_item"].keys() )
+        other_col_list = list( self.inv[0].keys() )
+        [ other_col_list.remove( col_to_be_removed ) for col_to_be_removed in ["_id","_item"] ]
+        for each_inv in self.inv:
+            comp_view = View()
+
+            for other_col in other_col_list: view[other_col] = each_inv[other_col]
+            for size in item_size_list:
+                view[ size ] = each_inv["_item"][ size ]
+
+                # Computation part of Total pcs, bundle, cbm, sqmtr
+                comp_view[ "SIZE" ], comp_view[ "PCS" ]  = size, each_inv["_item"][ size ]
+                comp_view.comp_bundle().comp_cbm().comp_sqmtr()
+
+            for comp_col in ("PCS", "BUNDLE", "CBM", "SQMTR" ): 
+                view[ comp_col ] = sum( comp_view[ comp_col ] )
+        writer = ExcelWriter( "./Update/Stock Report.xlsx", engine='xlsxwriter' )
+
+        # Invoice Wise Report
+        view.to_excel( writer=writer, sheet_name="inv_wise")
+
+        # Size Wise Report
+        size_wise_rep = View()
+        size_wise_rep.table["SIZE"] = item_size_list
+        for each_size in size_wise_rep["SIZE"]:
+            size_wise_rep["PCS"] = sum( view[ each_size ] )
+        
+        size_wise_rep.comp_all().to_excel( sheet_name="size_wise", writer=writer)
+            
+        writer.save()

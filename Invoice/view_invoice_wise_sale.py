@@ -46,4 +46,4 @@ class Invoice_Wise:
 
     def to_excel(self) :
         self.view.comp_bundle().comp_cbm().comp_sqmtr()
-        self.view.to_excel("./Update", "Sales Report - Complete Details", "Report")
+        self.view.to_excel("./Update/", "Sales Report - Complete Details", "Report")

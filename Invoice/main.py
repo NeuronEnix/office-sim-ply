@@ -9,8 +9,13 @@ sale = Sale( "./sale_inv.xlsx" )
 
 # Populating pur_sale table by going through each sale against purchase
 for each_sale_inv in sale.inv:
+
+    # if PUR_INV_ID was specified explicitly on sale_inv_xlsx
+    pur_inv_id = str(each_sale_inv["PUR_INV_ID"]).strip()
+    if pur_inv_id == "nan" or pur_inv_id == "" : pur_inv_id = None
+
     for item in each_sale_inv[ "_item" ]:
-        pur.purchase( item["SIZE"], item["PCS"], each_sale_inv[ "_id"], item["_id"] )
+        pur.purchase( item["SIZE"], item["PCS"], each_sale_inv[ "_id"], item["_id"], inv_id=pur_inv_id )
 
 from Report import Report
 view_list = [
@@ -39,3 +44,5 @@ p.mkdir(exist_ok=True )
 with open( "./meta/purchase.json", 'w') as f: f.write( str(pur.inv).replace("'",'"').replace('""', '"') )
 with open( "./meta/sale.json", 'w') as f: f.write( str(sale.inv).replace("'",'"') )
 with open( "./meta/pur_sale.json", 'w') as f: f.write( str(pur.pur_sale).replace("'",'"') )
+
+pur.to_excel()
