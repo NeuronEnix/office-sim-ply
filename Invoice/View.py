@@ -58,7 +58,10 @@ class View:
     
     def to_excel( self, path:str = "./", file_name:str = "file", sheet_name:str = "Sheet 1", writer:ExcelWriter = None  ):
         Path(path).mkdir(exist_ok=True,parents=True )
+        
         for c in '\/:*?"<>|': file_name = file_name.replace( c, " " )
+        for c in '\/:*?"<>|\'`': sheet_name = sheet_name.replace( c, " " )
+
         df = DataFrame( self.table )
         if writer: df.to_excel( writer, sheet_name=sheet_name, index=False )
         else: df.to_excel( path + file_name + ".xlsx", sheet_name=sheet_name, index = False )

@@ -36,6 +36,10 @@ self.pur_sale = [
 class Purchase:
     def __init__(self, path:str ):
         df = load_excel( path )
+        df["PUR_INV_ID"] = df["PUR_INV_ID"].str.upper()
+        df["SHIP_ID"] = df["SHIP_ID"].str.upper()
+        df["INVOICE NO"] = df["INVOICE NO"].str.upper()
+        
         self.inv = []
         self.pur_sale:List[ Dict[str,int] ] = []
 
@@ -47,15 +51,15 @@ class Purchase:
                 else: each_invoice[ col ] = df[ col ][ ind ] # Other info
             self.inv.append( each_invoice )
 
-    def purchase( self, size:str, pcs:int, sale_id:int, item_id:int, inv_id:int = None ) -> None:
+    def purchase( self, size:str, pcs:int, sale_id:int, item_id:int, pur_inv_id:int = None ) -> None:
         tot_pcs = pcs
-        if inv_id:
-            inv_id = int(inv_id)
-            if 0 <= inv_id < len( self.inv ): 
-                inv_id = int(inv_id)
-                inv_list = [ self.inv[ inv_id ] ]
+
+        if pur_inv_id:
+            
+            for each_pur_inv in self.inv:
+                if each_pur_inv["PUR_INV_ID"] == pur_inv_id: inv_list = [ each_pur_inv ]
             else: 
-                print( "INV_ID: {0} out of bound | [0:{1}]".format(inv_id, len(self.inv)-1) )
+                print( "Not Found -> PUR_INV_ID: ", pur_inv_id )
                 print("Press Enter to Exit!"); input(); exit()
 
         else: inv_list = self.inv

@@ -26,8 +26,8 @@ class Sale:
 
         self.inv = []
         
-        for _id, bill_num in enumerate( sorted( set( df["BILL"] ) ) ):
-            each_bill_df = df[ df[ "BILL" ] == bill_num ]
+        for _id, bill_num in enumerate( sorted( set( df["BILL NO"] ) ) ):
+            each_bill_df = df[ df[ "BILL NO" ] == bill_num ]
             each_data = { "_id": _id  }
 
             # Get data from all col of first index because they are the same throughout

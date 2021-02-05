@@ -4,6 +4,8 @@ from Purchase import Purchase
 from Sale import Sale
 from pathlib import Path
 
+
+
 pur = Purchase( "./pur_inv.xlsx" )
 sale = Sale( "./sale_inv.xlsx" )
 
@@ -15,11 +17,14 @@ for each_sale_inv in sale.inv:
     if pur_inv_id == "nan" or pur_inv_id == "" : pur_inv_id = None
 
     for item in each_sale_inv[ "_item" ]:
-        pur.purchase( item["SIZE"], item["PCS"], each_sale_inv[ "_id"], item["_id"], inv_id=pur_inv_id )
+        pur.purchase( item["SIZE"], item["PCS"], each_sale_inv[ "_id"], item["_id"], pur_inv_id=pur_inv_id )
 
 from Report import Report
+from view_ship_wise_sale import Ship_Wise
+
 view_list = [
-    Report( pur.inv, sale.inv )
+    Report( pur.inv, sale.inv ),
+    Ship_Wise( pur.inv, sale.inv )
 ]
 
 for view in view_list:
