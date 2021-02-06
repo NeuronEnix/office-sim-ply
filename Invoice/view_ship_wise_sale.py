@@ -1,5 +1,5 @@
 from typing import List, Dict, Any
-
+from helper import to_cbm, to_sqmtr
 from View import View
 # from helper import to_cbm, to_sqmtr
 
@@ -26,14 +26,19 @@ class Ship_Wise:
         
         try:
             self.ship[ ship_id ][ bill_num ][ "PCS" ] += pcs
-            self.ship[ ship_id ][ bill_num ][ "INVOICE NO" ].add( pur_invoice_num )
+            self.ship[ ship_id ][ bill_num ][ "CBM" ] += to_cbm( cur_item["SIZE"], pcs )
+            self.ship[ ship_id ][ bill_num ][ "SQMTR" ] += to_sqmtr( cur_item["SIZE"], pcs )
+            self.ship[ ship_id ][ bill_num ][ "REFERENCE" ].add( pur_invoice_num )
         except:
             self.ship[ ship_id ][ bill_num ] = { 
                 "BILL NO" : cur_sale_inv["BILL NO"],
                 "BILL DATE": cur_sale_inv["BILL DATE"],
                 "PARTY NAME": cur_sale_inv["PARTY NAME"],
                 "PCS" : pcs,
-                "INVOICE NO": set( [pur_invoice_num] )
+                "CBM" : to_cbm( cur_item["SIZE"], pcs ),
+                "SQMTR" : to_sqmtr( cur_item["SIZE"], pcs ),
+                "REFERENCE": set( [pur_invoice_num] )
+
             }
 
     def to_excel(self) :
@@ -41,7 +46,9 @@ class Ship_Wise:
             ship_view = View()
             
             for bill in each_ship.values():
-                bill[ "INVOICE NO" ] = ", ".join( sorted(bill["INVOICE NO"]))
+                bill[ "CBM" ] = round( bill["CBM"], 4 )
+                bill[ "SQMTR" ] = round( bill["SQMTR"], 2 )
+                bill[ "REFERENCE" ] = ", ".join( sorted(bill["REFERENCE"]) )
                 for col in bill.keys(): 
                     ship_view[ col ] = bill[ col ]
 
