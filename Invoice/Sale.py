@@ -23,7 +23,8 @@ class Sale:
         df = load_excel( path )
         df[ "SIZE" ] = df[ "SIZE" ].str.upper() # Capitalize values of "SIZE" column: "8x4" to "8X4"
         df[ "GRADE" ] = df[ "GRADE" ].str.upper() # Capitalize values of "Grade" column: "c1" to "C1"
-
+        df["PUR_INV_ID"] = df["PUR_INV_ID"].str.upper()
+        
         self.inv = []
         
         for _id, bill_num in enumerate( sorted( set( df["BILL NO"] ) ) ):

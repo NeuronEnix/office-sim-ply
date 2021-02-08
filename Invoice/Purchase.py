@@ -51,13 +51,13 @@ class Purchase:
                 else: each_invoice[ col ] = df[ col ][ ind ] # Other info
             self.inv.append( each_invoice )
 
-    def purchase( self, size:str, pcs:int, sale_id:int, item_id:int, pur_inv_id:int = None ) -> None:
+    def purchase( self, size:str, pcs:int, sale_id:int, item_id:int, pur_inv_id:str = None ) -> None:
         tot_pcs = pcs
-
         if pur_inv_id:
             
             for each_pur_inv in self.inv:
-                if each_pur_inv["PUR_INV_ID"] == pur_inv_id: inv_list = [ each_pur_inv ]
+                if each_pur_inv["PUR_INV_ID"] == pur_inv_id: 
+                    inv_list = [ each_pur_inv ]; break
             else: 
                 print( "Not Found -> PUR_INV_ID: ", pur_inv_id )
                 print("Press Enter to Exit!"); input(); exit()
