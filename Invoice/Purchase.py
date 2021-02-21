@@ -83,7 +83,9 @@ class Purchase:
                 "pur_id" : each_inv[ "_id" ],
                 "sale_id": sale_id,
                 "item_id": item_id,
-                "pcs": deduct_pcs
+                "pcs": deduct_pcs,
+                "opening_bal": each_inv_item[ size ] + deduct_pcs,
+                "closing_bal": each_inv_item[ size ]
             })
 
             if pcs == 0: return

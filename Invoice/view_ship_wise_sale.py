@@ -15,7 +15,7 @@ class Ship_Wise:
             self.ship[ each_invoice[ "SHIP_ID" ] ] = {}
             self.container_num[ each_invoice[ "SHIP_ID" ] ] = each_invoice[ "CNTNR NO" ]
 
-    def pur_sale( self, _id:int, pur_id:int, sale_id:int, item_id:int, pcs:int ):
+    def pur_sale( self, _id:int, pur_id:int, sale_id:int, item_id:int, pcs:int, opening_bal:int, closing_bal:int ):
         cur_pur_inv  = self.pur_inv_list [ pur_id ]
         cur_sale_inv = self.sale_inv_list[ sale_id ]
         cur_item = cur_sale_inv[ "_item" ][ item_id ]

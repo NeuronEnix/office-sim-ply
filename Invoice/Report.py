@@ -28,7 +28,7 @@ class Report:
         self.sale_inv_list = sale_inv_list
         self.view = View()
 
-    def pur_sale( self, _id:int, pur_id:int, sale_id:int, item_id:int, pcs:int ):
+    def pur_sale( self, _id:int, pur_id:int, sale_id:int, item_id:int, pcs:int, opening_bal:int, closing_bal:int ):
         cur_pur_inv  = self.pur_inv_list [ pur_id ]
         cur_sale_inv = self.sale_inv_list[ sale_id ]
         cur_item = cur_sale_inv[ "_item" ][ item_id ]
@@ -43,6 +43,8 @@ class Report:
         for key in ("GRADE","SIZE"): self.view[ key ] = cur_item[ key ]
 
         self.view[ "PCS" ] = pcs
+        self.view[ "OP. BAL"] = opening_bal
+        self.view[ "CL. BAL"] = closing_bal
 
     def to_excel(self) :
         self.view.comp_bundle().comp_cbm().comp_sqmtr()

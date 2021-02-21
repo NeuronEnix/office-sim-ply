@@ -37,6 +37,8 @@ for view in view_list:
             each_pur_sale["sale_id"],
             each_pur_sale["item_id"],
             each_pur_sale["pcs"],
+            each_pur_sale["opening_bal"],
+            each_pur_sale["closing_bal"]
         )
 
 # After making all the views, write them to excel using to_excel ( all view must implement it )
