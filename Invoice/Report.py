@@ -12,7 +12,6 @@ class Report:
         for common_keys in [ "_id", "_item" ]:
             self.pur_inv_keys.remove( common_keys )
             self.sale_inv_keys.remove( common_keys )
-        self.sale_inv_keys.remove("PUR_INV_ID")
         
         # If any common keys in found other than "_id" and "_item" which was removed in the above for loop
         if len( self.pur_inv_keys.intersection( self.sale_inv_keys ) ) != 0: 

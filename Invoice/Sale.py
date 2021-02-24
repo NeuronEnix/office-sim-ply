@@ -7,8 +7,8 @@ self.data = [
     {
         "_id":0,
         "_item": [
-            { "_id":0, "SIZE": "6X3", "PCS": 500, "GRADE": "C2" },
-            { "_id":1, "SIZE": "8X4", "PCS": 650, "GRADE": "C3" },
+            { "_id":0, "SIZE": "6X3", "PCS": 500, "GRADE": "C2", "PUR_INV_ID": "I9" },
+            { "_id":1, "SIZE": "8X4", "PCS": 650, "GRADE": "C3", "PUR_INV_ID": "I8" },
             .....................................................,
         ],
         "info-1": "something-1",
@@ -32,9 +32,9 @@ class Sale:
             each_data = { "_id": _id  }
 
             # Get data from all col of first index because they are the same throughout
-            # except ( "SIZE", "PCS", "GRADE" ) -> they may change every row
+            # except ( "SIZE", "PCS", "GRADE", "PUR_INV_ID" ) -> they may change every row
             for col in each_bill_df.columns:
-                if col not in ( "SIZE", "PCS", "GRADE" ):
+                if col not in ( "SIZE", "PCS", "GRADE", "PUR_INV_ID" ):
                     each_data[ col ] = each_bill_df[col][ each_bill_df.index[0] ]
             
             # Adding items to data[ _item ]
@@ -46,6 +46,8 @@ class Sale:
                         "SIZE" : each_bill_df[ "SIZE"  ][ ind ],
                         "PCS"  : int(each_bill_df[ "PCS"   ][ ind ]),
                         "GRADE": each_bill_df[ "GRADE" ][ ind ],
+                        # Used to forcefully take pcs from specified PUR_INV_ID
+                        "PUR_INV_ID": each_bill_df[ "PUR_INV_ID" ][ ind ]
                     })
                 except:
                     print( "SIZE or PCS or GRADE Column is missing" )
