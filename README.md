@@ -15,5 +15,6 @@ Install `pyinstaller` if you want to make an .exe file
 
 Documentation are in
 `Purchase.py`: for `pur_inv`, `pur_sale`
+
 `Sale.py`: for `sale_inv`
 
