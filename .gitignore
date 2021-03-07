@@ -1,4 +1,10 @@
 .vscode
 *.exe
 __pycache__
-Update.xlsx
+~$pur_inv.xlsx
+~$Update.xlsx
+build
+dist
+meta
+*.spec
+Update
