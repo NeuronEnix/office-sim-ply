@@ -22,10 +22,12 @@ for each_sale_inv in sale.inv:
 
 from Report import Report
 from view_ship_wise_sale import Ship_Wise
+from view_inv_wise_sale import Inv_Wise
 
 view_list = [
     Report( pur.inv, sale.inv ),
-    Ship_Wise( pur.inv, sale.inv )
+    Ship_Wise( pur.inv, sale.inv ),
+    Inv_Wise( pur.inv, sale.inv )
 ]
 
 for view in view_list:
