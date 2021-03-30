@@ -29,7 +29,7 @@ class Inv_Wise:
         self.inv[ self.getKey( cur_pur_inv ) ][ "PARTY NAME" ] = cur_sale_inv[ "PARTY NAME" ]
         self.inv[ self.getKey( cur_pur_inv ) ][ "GRADE"      ] = cur_item[ "GRADE"      ]
         self.inv[ self.getKey( cur_pur_inv ) ][ "SIZE"       ] = cur_item[ "SIZE"       ]
-        self.inv[ self.getKey( cur_pur_inv ) ][ "PCS"        ] = cur_item[ "PCS"        ]
+        self.inv[ self.getKey( cur_pur_inv ) ][ "PCS"        ] = pcs
 
     def to_excel(self) :
         for each_key in self.inv:
